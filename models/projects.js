@@ -30,4 +30,9 @@ const ProjectSchema = new Schema({
     review: {
         type: String
     }
-})
+});
+
+const Project = mongoose.model('projects', ProjectSchema);
+
+model.exports = Project;
+
