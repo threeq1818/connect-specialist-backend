@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 ServiceSchema = new Schema({
-    specialist_email: {
+    specialist_id: {
         type: String,
         required: true
     },
@@ -19,7 +19,7 @@ ServiceSchema = new Schema({
         type: Number,
         required: true
     },
-    prefered_hour: {
+    preferred_hour: {
         type: String,
         required: true
     }
