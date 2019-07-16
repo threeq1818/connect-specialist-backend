@@ -71,4 +71,19 @@ router.get('/specialist/:id', function (req, res) {
 router.update('/specialist/:id', function (req, res) {
     const id = req.params.id;
 
+    let newService = new Service({
+        specialist_id: req.body.specialist_id,
+        service_type: req.body.service_type,
+        description: req.body.description,
+        hourly_rate: req.body.hourly_rate,
+        preferred_hour: req.body.preferred_hour
+    });
+
+    Service.update(id, newService)
+        .then(service => {
+            res.json(service);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
 })
