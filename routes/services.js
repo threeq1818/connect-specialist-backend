@@ -86,4 +86,19 @@ router.update('/specialist/:id', function (req, res) {
         .catch(err => {
             res.status(400).json(err);
         });
-})
+});
+
+// edit service inner page of specialist page
+// deleted service record
+router.delete('/:id', function (req, res) {
+    const id = req.params.id;
+
+    Service.deleteById(id)
+        .then(service => {
+            res.json(service);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
+});
+
