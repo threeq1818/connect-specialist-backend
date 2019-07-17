@@ -2,9 +2,10 @@
 
 const express = require('express');
 const router = express.Router();
-// const User = require('../models/users');
 const Service = require('../models/services');
+const User = require('../models/users');
 const Project = require('../models/projects');
+const validateProjectInput = require('../validation/projectinput');
 
 // create request page for customer
 // insert a project
@@ -14,15 +15,15 @@ router.post('/', function (req, res) {
     let newProject = new Project({
         service_id: req.body.service_id,
         customer_id: req.body.customer_id,
-        request_date: req.body.request_date,
-        accept_date: req.body.accept_date,
-        reject_date: req.body.reject_date,
-        status: req.body.status,
-        rating: req.body.rating,
-        review: req.body.review
+        request_date: Date.now(),
+        accept_date: '',
+        reject_date: '',
+        status: 'request',
+        rating: '',
+        review: ''
     });
 
-    Project.save(newProject)
+    newProject.save()
         .then(project => {
             res.json(project);
         })

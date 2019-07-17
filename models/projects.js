@@ -22,10 +22,10 @@ const ProjectSchema = new Schema({
         type: Date
     },
     status: {
-        type: Number //0: request, 1: accept, 2: reject, 3: finish
+        type: String //request, accept, reject, finish
     },
     rating: {
-        type: Number    //1-5
+        type: String    //1-5
     },
     review: {
         type: String
@@ -33,13 +33,13 @@ const ProjectSchema = new Schema({
 });
 
 // const Project = mongoose.model('projects', ProjectSchema);
-var Project;
+// var Project;
 
 if (mongoose.models.Project) {
-    Project = mongoose.model('projects');
+    mongoose.models.Project = mongoose.model('projects');
 } else {
-    Project = mongoose.model('projects', ProjectSchema);
+    mongoose.models.Project = mongoose.model('projects', ProjectSchema);
 }
 
-module.exports = Project;
+module.exports = mongoose.models.Project;
 

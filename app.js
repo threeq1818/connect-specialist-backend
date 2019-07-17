@@ -5,8 +5,8 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const config = require('./db');
-const users = require('./routes/users');
 const services = require('./routes/services');
+const users = require('./routes/users');
 const projects = require('./routes/projects');
 
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
