@@ -25,6 +25,13 @@ ServiceSchema = new Schema({
     }
 });
 
-const Service = mongoose.model('services', ServiceSchema);
+//const Service = mongoose.model('services', ServiceSchema);
+var Service;
+
+if (mongoose.models.Service) {
+    Service = mongoose.model('services');
+} else {
+    Service = mongoose.model('services', ServiceSchema);
+}
 
 module.exports = Service

@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const User = require('../models/users');
+// const User = require('../models/users');
 const Service = require('../models/services');
 const Project = require('../models/projects');
 
@@ -12,11 +12,11 @@ router.post('/', function (req, res) {
     const { errors, isValid } = validateProjectInput(req.body);
 
     let newProject = new Project({
-        service_id = req.body.service_id,
-        customer_id = req.body.customer_id,
-        request_date = req.body.request_date,
-        accept_date = req.body.accept_date,
-        reject_date = req.body.reject_date,
+        service_id: req.body.service_id,
+        customer_id: req.body.customer_id,
+        request_date: req.body.request_date,
+        accept_date: req.body.accept_date,
+        reject_date: req.body.reject_date,
         status: req.body.status,
         rating: req.body.rating,
         review: req.body.review
@@ -33,10 +33,10 @@ router.post('/', function (req, res) {
 
 // specialist page
 // fetch the finished projects by a specialist with id
-router.get('/specialist/finishedProjs/:id', function (req, res) {
+router.get('/specialist/finishedProjs/:id', async function (req, res) {
     const speialist_id = req.params.id;
-    const user = await User.findById(speialist_id);
-    const services = await Service.find({ specialist_id: speialist_id });
+    // const user = await User.findById(speialist_id);
+    // const services = await Service.find({ specialist_id: speialist_id });
 
     const sidArray = services.map(a => a.service_id);
     Project.find({ service_id: { in: sidArray } })
@@ -52,3 +52,5 @@ router.get('/specialist/finishedProjs/:id', function (req, res) {
             res.json(projects);
         })
 });
+
+module.exports = router;

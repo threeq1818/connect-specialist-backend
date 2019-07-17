@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const Service = require('../models/services');
-
+const validateServiceInput = require('../validation/serviceinput')
 //  from specialist page
 //  insert a new service
 router.post('/', function (req, res) {
