@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ProjectSchema = new Schema({
-    from_specialist: {
+    service_id: {
         type: String,
         require: true
     },
-    to_customer: {
+    customer_id: {
         type: String,
         require: true
     },

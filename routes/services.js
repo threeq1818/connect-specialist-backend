@@ -23,7 +23,10 @@ router.post('/', function (req, res) {
     newService.save()
         .then(service => {
             res.json(service);
-        });
+        })
+        .catch(err => {
+            res.status(400).json(err); //?????
+        })
 });
 
 // from home page without authentication
