@@ -45,7 +45,6 @@ router.get('/fetchAll', function (req, res) {
 // fetch a service with _id
 router.get('/:id', function (req, res) {
     const id = req.params.id;
-
     Service.findById(id)
         .then(service => {
             res.json(service);
@@ -71,20 +70,25 @@ router.get('/specialist/:id', function (req, res) {
 
 // edit service inner page fo specialist page
 // update the service record with new data
-router.put('/specialist/:id', function (req, res) {
+router.put('/:id', function (req, res) {
     const id = req.params.id;
 
-    let newService = new Service({
+    let newService = {
         specialist_id: req.body.specialist_id,
         service_type: req.body.service_type,
         description: req.body.description,
         hourly_rate: req.body.hourly_rate,
         preferred_hour: req.body.preferred_hour
-    });
+    };
 
-    Service.update(id, newService)
+    Service.updateOne({ _id: id }, newService)
         .then(service => {
             res.json(service);
+            // {
+            //     "n": 1,
+            //     "nModified": 1,  //modified?
+            //     "ok": 1
+            // }
         })
         .catch(err => {
             res.status(400).json(err);
@@ -96,9 +100,14 @@ router.put('/specialist/:id', function (req, res) {
 router.delete('/:id', function (req, res) {
     const id = req.params.id;
 
-    Service.deleteById(id)
+    Service.deleteOne({ _id: id })
         .then(service => {
             res.json(service);
+            // {
+            //     "n": 1,
+            //     "ok": 1,
+            //     "deletedCount": 1
+            // }
         })
         .catch(err => {
             res.status(400).json(err);
