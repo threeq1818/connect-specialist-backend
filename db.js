@@ -1,5 +1,5 @@
 // db.js
 
 module.exports = {
-    DB: 'mongoose://localhost:27017/test'
+    DB: 'mongodb://localhost:27017/test'
 }
