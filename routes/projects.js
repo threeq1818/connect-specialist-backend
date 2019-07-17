@@ -125,4 +125,29 @@ router.get('/customer/finishedProjs/:id', async function (req, res) {
         })
 });
 
+// customer page
+// fetch the project by  project_id
+router.get('/:id', async function (req, res) {
+    const project_id = req.params.id;
+
+    Project.findById(project_id)
+        .then(async (project) => {
+            const service = await Service.findById(project.service_id);
+            const user = await User.findById(service.specialist_id);
+            let newObj = project.toObject();
+            newObj.specialist_email = user.email;
+            newObj.service_type = service.service_type;
+            newObj.description = service.description;
+            newObj.hourly_rate = service.hourly_rate;
+            newObj.preferred_hour = service.preferred_hour;
+            res.json(newObj);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        })
+});
+
+// customer page
+// update the project record 
+
 module.exports = router;
