@@ -9,9 +9,9 @@ module.exports = function validateRegisterInput(data) {
     data.email = !isEmpty(data.email) ? data.email : '';
     data.account_type = !isEmpty(data.account_type) ? data.account_type : '';
     data.password = !isEmpty(data.password) ? data.password : '';
+    data.password_confirm = !isEmpty(data.password_confirm) ? data.password_confirm : '';
 
-
-    if (!Validator.isEmpty(data.email)) {
+    if (Validator.isEmpty(data.email)) {
         errors.name = 'Email field is required.';
     }
 
@@ -19,7 +19,7 @@ module.exports = function validateRegisterInput(data) {
         errors.name = 'Email is invalid.';
     }
 
-    if (!Validator.isEmpty(data.account_type)) {
+    if (Validator.isEmpty(data.account_type)) {
         errors.name = 'Account-Type is required.';
     }
 
@@ -31,16 +31,16 @@ module.exports = function validateRegisterInput(data) {
         errors.password = 'Password is required';
     }
 
+    if (Validator.isEmpty(data.password_confirm)) {
+        errors.password_confirm = 'Confirm Password is required';
+    }
+
     if (!Validator.isLength(data.password_confirm, { min: 6, max: 30 })) {
         errors.password_confirm = 'Password must have 6 chars';
     }
 
     if (!Validator.equals(data.password, data.password_confirm)) {
         errors.password_confirm = 'Password and Confirm Password must match';
-    }
-
-    if (Validator.isEmpty(data.password_confirm)) {
-        errors.password_confirm = 'Password is required';
     }
 
     return {

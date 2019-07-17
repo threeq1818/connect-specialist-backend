@@ -71,7 +71,7 @@ router.get('/specialist/:id', function (req, res) {
 
 // edit service inner page fo specialist page
 // update the service record with new data
-router.update('/specialist/:id', function (req, res) {
+router.put('/specialist/:id', function (req, res) {
     const id = req.params.id;
 
     let newService = new Service({
@@ -105,3 +105,4 @@ router.delete('/:id', function (req, res) {
         });
 });
 
+module.exports = router;
