@@ -15,10 +15,10 @@ const ProjectSchema = new Schema({
     request_date: {
         type: Date
     },
-    accept_date: {
+    accept_reject_date: {
         type: Date
     },
-    reject_date: {
+    finish_date: {
         type: Date
     },
     status: {

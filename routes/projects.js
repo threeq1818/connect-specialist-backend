@@ -6,18 +6,22 @@ const Service = require('../models/services');
 const User = require('../models/users');
 const Project = require('../models/projects');
 const validateProjectInput = require('../validation/projectinput');
+const isEmpty = require('../validation/is-empty');
 
 // create request page for customer
 // insert a project
 router.post('/', function (req, res) {
     const { errors, isValid } = validateProjectInput(req.body);
 
+    if (!isValid)
+        res.status(400).json(errors);
+
     let newProject = new Project({
         service_id: req.body.service_id,
         customer_id: req.body.customer_id,
         request_date: Date.now(),
-        accept_date: '',
-        reject_date: '',
+        accept_reject_date: '',
+        finish_date: '',
         status: 'request',
         rating: '',
         review: ''
@@ -105,10 +109,10 @@ router.get('/customer/finishedProjs/:id', async function (req, res) {
     const sidArray = services.map(a => a._id);
     // console.log(sidArray);
 
-    let newProjectProtoType = [];
+    let newProtoTypeProjectArray = [];
     Project.find({ customer_id: customer_id, status: "finish" })
         .then(projects => {
-            projects.forEach(element => {
+            projects.forEach(async (element) => {
                 let newObj = element.toObject();
                 newObj.specialist_email = user.email;
                 let service = services.find(x => x._id == element.service_id);
@@ -116,9 +120,9 @@ router.get('/customer/finishedProjs/:id', async function (req, res) {
                 newObj.description = service.description;
                 newObj.hourly_rate = service.hourly_rate;
                 newObj.preferred_hour = service.preferred_hour;
-                newProjectProtoType.push(newObj);
+                newProtoTypeProjectArray.push(newObj);
             });
-            res.json(newProjectProtoType);
+            res.json(newProtoTypeProjectArray);
         })
         .catch(err => {
             res.status(400).json(err);
@@ -147,7 +151,88 @@ router.get('/:id', async function (req, res) {
         })
 });
 
+// specialist page
+// specialist accepts the proejct
+router.put('/specialist/acceptProject/:id', function (req, res) {
+    const project_id = req.params.id;
+    // const { errors, isValid } = validateProjectInput(req.body);
+
+    // if (!isValid)
+    //     res.status(400).json(errors);
+
+    Project.updateOne({ _id: project_id }, { $set: { status: 'accept', accept_reject_date: Date.now() } })
+        .then(project => {
+            res.json(project);
+            // {
+            //     "n": 1,
+            //     "nModified": 1,
+            //     "ok": 1
+            // }
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
+});
+
+// specialist page
+// specialist reject the proejct
+router.put('/specialist/rejectProject/:id', function (req, res) {
+    const project_id = req.params.id;
+    // const { errors, isValid } = validateProjectInput(req.body);
+
+    // if (!isValid)
+    //     res.status(400).json(errors);
+
+    Project.updateOne({ _id: project_id }, { $set: { status: 'reject', accept_reject_date: Date.now() } })
+        .then(project => {
+            res.json(project);
+            // {
+            //     "n": 1,
+            //     "nModified": 1,
+            //     "ok": 1
+            // }
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
+});
+
 // customer page
-// update the project record 
+// customer finish the project with rating and review
+router.put('/customer/finishProject/:id', function (req, res) {
+    // const { errors, isValid } = validateProjectInput(req.body);
+
+    // if (!isValid)
+    //     res.status(400).json(errors);
+
+    const project_id = req.params.id;
+    // let newProject = new Project({
+    //     service_id: req.body.service_id,
+    //     customer_id: req.body.customer_id,
+    //     request_date: Date.now(),
+    //     accept_reject_date: '',
+    //     finish_date: '',
+    //     status: 'request',
+    //     rating: '',
+    //     review: ''
+    // });
+
+
+    const rating = !isEmpty(req.body.rating) ? req.body.rating : '';
+    const review = !isEmpty(req.body.review) ? req.body.review : '';
+
+    Project.updateOne({ _id: project_id }, { $set: { status: 'finish', finish_date: Date.now(), rating: rating, review: review } })
+        .then(project => {
+            res.json(project);
+            // {
+            //     "n": 1,
+            //     "nModified": 1,
+            //     "ok": 1
+            // }
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
+});
 
 module.exports = router;

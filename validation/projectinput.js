@@ -4,14 +4,14 @@ const Validator = require('validator');
 const isEmpty = require('./is-empty');
 
 
-// service_id, customer_id, request_date, accept_date, reject_date, status, rating, review 
+// service_id, customer_id, request_date, accept_reject_date, finish_date, status, rating, review 
 module.exports = function validateServiceInput(data) {
     let errors = {};
     data.service_id = !isEmpty(data.service_id) ? data.service_id : '';
     data.customer_id = !isEmpty(data.customer_id) ? data.customer_id : '';
     data.request_date = !isEmpty(data.request_date) ? data.request_date : '';
-    data.accept_date = !isEmpty(data.accept_date) ? data.accept_date : '';
-    data.reject_date = !isEmpty(data.reject_date) ? data.reject_date : '';
+    data.accept_reject_date = !isEmpty(data.accept_reject_date) ? data.accept_reject_date : '';
+    data.finish_date = !isEmpty(data.finish_date) ? data.finish_date : '';
     data.status = !isEmpty(data.status) ? data.status : '';
     data.rating = !isEmpty(data.rating) ? data.rating : '';
     data.review = !isEmpty(data.review) ? data.review : '';

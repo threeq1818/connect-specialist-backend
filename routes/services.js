@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const Service = require('../models/services');
+const User = require('../models/users');
 const validateServiceInput = require('../validation/serviceinput')
 //  from specialist page
 //  insert a new service
@@ -31,7 +32,7 @@ router.post('/', function (req, res) {
 
 // from home page without authentication
 // fetch all services
-router.get('/fetchAll', function (req, res) {
+router.get('/home/fetchAll', function (req, res) {
     Service.find({})
         .then(services => {
             res.json(services);
@@ -52,6 +53,28 @@ router.get('/:id', function (req, res) {
         .catch(err => {
             res.status(400).json(err);  //?????
         });
+});
+
+// customer page
+// fetch all services in detail
+router.get('/aaa/aaa', async function (req, res) {
+    console.log("aa");
+    let newProtoTypeServiceArray = [];
+    Service.find()
+        .then((services) => {
+            services.forEach(async (service) => {
+                let newObj = service.toObject();
+                const user = await User.findById(service.specialist_id);
+                console.log(service.specialist_id);
+                console.log(user.email);
+                newObj.specialist_email = user.email;
+                newProtoTypeServiceArray.push(newObj);
+            });
+            res.json(newProtoTypeServiceArray);
+        })
+        .catch(err => {
+            res.status(400).json(err);  //?????
+        })
 });
 
 // specialist page
