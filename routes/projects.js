@@ -11,6 +11,9 @@ const isEmpty = require('../validation/is-empty');
 // create request page for customer
 // insert a project
 router.post('/', function (req, res) {
+    if (!req.user)
+        return res.status(401).json({ message: "not auth" });
+
     const { errors, isValid } = validateProjectInput(req.body);
 
     if (!isValid)
@@ -40,6 +43,9 @@ router.post('/', function (req, res) {
 // specialist page
 // fetch the finished projects by a specialist with id
 router.get('/specialist/finishedProjs/:id', async function (req, res) {
+    if (!req.user)
+        return res.status(401).json({ message: "not auth" });
+
     const speialist_id = req.params.id;
     const user = await User.findById(speialist_id);
     const services = await Service.find({ specialist_id: speialist_id });
@@ -69,6 +75,9 @@ router.get('/specialist/finishedProjs/:id', async function (req, res) {
 // specialist page
 // fetch the requested projects by a specialist with id
 router.get('/specialist/requestedProjs/:id', async function (req, res) {
+    if (!req.user)
+        return res.status(401).json({ message: "not auth" });
+
     const speialist_id = req.params.id;
     const user = await User.findById(speialist_id);
     // console.log(user);
@@ -100,6 +109,9 @@ router.get('/specialist/requestedProjs/:id', async function (req, res) {
 // customer page
 // fetch the finnished projects of the selected customer by id
 router.get('/customer/finishedProjs/:id', async function (req, res) {
+    if (!req.user)
+        return res.status(401).json({ message: "not auth" });
+
     const customer_id = req.params.id;
     const user = await User.findById(customer_id);
     // console.log(user);
@@ -132,6 +144,9 @@ router.get('/customer/finishedProjs/:id', async function (req, res) {
 // customer page
 // fetch the project by  project_id
 router.get('/:id', async function (req, res) {
+    if (!req.user)
+        return res.status(401).json({ message: "not auth" });
+
     const project_id = req.params.id;
 
     Project.findById(project_id)
@@ -154,6 +169,9 @@ router.get('/:id', async function (req, res) {
 // specialist page
 // specialist accepts the proejct
 router.put('/specialist/acceptProject/:id', function (req, res) {
+    if (!req.user)
+        return res.status(401).json({ message: "not auth" });
+
     const project_id = req.params.id;
     // const { errors, isValid } = validateProjectInput(req.body);
 
@@ -200,6 +218,9 @@ router.put('/specialist/rejectProject/:id', function (req, res) {
 // customer page
 // customer finish the project with rating and review
 router.put('/customer/finishProject/:id', function (req, res) {
+    if (!req.user)
+        return res.status(401).json({ message: "not auth" });
+
     // const { errors, isValid } = validateProjectInput(req.body);
 
     // if (!isValid)

@@ -8,6 +8,7 @@ const config = require('./db');
 const services = require('./routes/services');
 const users = require('./routes/users');
 const projects = require('./routes/projects');
+const authMiddleware = require('./middleware/auth');
 
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
     () => { console.log("Database is connected."); },
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
+app.use(authMiddleware);
 app.use('/api/users', users);
 app.use('/api/services', services);
 app.use('/api/projects', projects);
