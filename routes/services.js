@@ -64,9 +64,8 @@ router.get('/fetchAll', async function (req, res) {
             services.forEach(async (service) => {
                 let newObj = service.toObject();
                 const user = await User.findById(service.specialist_id);
-                console.log(service.specialist_id);
-                console.log(user.email);
                 newObj.specialist_email = user.email;
+                newObj.rating = 3;
                 newProtoTypeServiceArray.push(newObj);
             });
             res.json(newProtoTypeServiceArray);
