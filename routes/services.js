@@ -57,8 +57,7 @@ router.get('/:id', function (req, res) {
 
 // customer page
 // fetch all services in detail
-router.get('/aaa/aaa', async function (req, res) {
-    console.log("aa");
+router.get('/fetchAll', async function (req, res) {
     let newProtoTypeServiceArray = [];
     Service.find()
         .then((services) => {
