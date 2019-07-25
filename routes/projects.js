@@ -107,6 +107,49 @@ router.get('/specialist/requestedProjs/:id', async function (req, res) {
 });
 
 // customer page
+// fetch the requested projects from the customer
+router.get('/customer/requestedProjs/:id', async function (req, res) {
+
+    if (!req.user)
+        return res.status(401).json({ message: "not auth" });
+
+    const customer_id = req.params.id;
+    const user = await User.findById(customer_id);
+    // console.log(user);
+    const services = await Service.find();
+    // console.log(services);
+
+    const sidArray = services.map(a => a._id);
+    // console.log(sidArray);
+
+    let newProtoTypeProjectArray = [];
+    Project.find({ customer_id: customer_id, status: { $in: ['request', 'accept', 'reject'] } })
+        .then(projects => {
+            projects.forEach(async (element) => {
+                let newObj = element.toObject();
+                newObj.specialist_email = user.email;
+                let service = services.find(x => x._id == element.service_id);
+                if (isEmpty(service))
+                    return;
+                newObj.service_type = service.service_type;
+                newObj.description = service.description;
+                newObj.hourly_rate = service.hourly_rate;
+                newObj.preferred_hour = service.preferred_hour;
+                newObj.status = newObj.status;
+                if (newObj.status === 'request')
+                    newObj.date = newObj.request_date;
+                else
+                    newObj.date = newObj.accept_reject_date;
+                newProtoTypeProjectArray.push(newObj);
+            });
+            res.json(newProtoTypeProjectArray);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        })
+});
+
+// customer page
 // fetch the finnished projects of the selected customer by id
 router.get('/customer/finishedProjs/:id', async function (req, res) {
     if (!req.user)
