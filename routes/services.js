@@ -5,6 +5,7 @@ const router = express.Router();
 const Service = require('../models/services');
 const User = require('../models/users');
 const validateServiceInput = require('../validation/serviceinput')
+const isEmpty = require('../validation//is-empty');
 //  from specialist page
 //  insert a new service
 router.post('/', function (req, res) {
@@ -44,7 +45,7 @@ router.get('/home/fetchAll', function (req, res) {
 
 // without authentication home page
 // fetch a service with _id
-router.get('/:id', function (req, res) {
+router.get('/byId/:id', function (req, res) {
     const id = req.params.id;
     Service.findById(id)
         .then(service => {
@@ -60,14 +61,16 @@ router.get('/:id', function (req, res) {
 router.get('/fetchAll', async function (req, res) {
     let newProtoTypeServiceArray = [];
     Service.find()
-        .then((services) => {
-            services.forEach(async (service) => {
+        .then(async (services) => {
+            await Promise.all(services.map(async (service) => {
                 let newObj = service.toObject();
-                const user = await User.findById(service.specialist_id);
-                newObj.specialist_email = user.email;
+                const user = await User.find({ _id: service.specialist_id });
+                if (isEmpty(user))
+                    return;
+                newObj.specialist_email = user[0].email;
                 newObj.rating = 3;
                 newProtoTypeServiceArray.push(newObj);
-            });
+            }));
             res.json(newProtoTypeServiceArray);
         })
         .catch(err => {

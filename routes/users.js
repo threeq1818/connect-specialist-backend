@@ -112,7 +112,7 @@ router.get('/me', passport.authenticate('jwt', { session: false }), (req, res) =
   return res.json({
     id: req.user.id,
     email: req.user.email,
-    acount_type: req.user.account_type
+    account_type: req.user.account_type
   });
 });
 

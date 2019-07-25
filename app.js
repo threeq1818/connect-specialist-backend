@@ -21,6 +21,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
+app.use(passport.initialize());
+require('./passport')(passport);
 app.use(authMiddleware);
 app.use('/api/users', users);
 app.use('/api/services', services);
