@@ -114,7 +114,7 @@ router.get('/customer/requestedProjs/:id', async function (req, res) {
         return res.status(401).json({ message: "not auth" });
 
     const customer_id = req.params.id;
-    const user = await User.findById(customer_id);
+    const users = await User.find();
     // console.log(user);
     const services = await Service.find();
     // console.log(services);
@@ -127,10 +127,13 @@ router.get('/customer/requestedProjs/:id', async function (req, res) {
         .then(projects => {
             projects.forEach(async (element) => {
                 let newObj = element.toObject();
-                newObj.specialist_email = user.email;
                 let service = services.find(x => x._id == element.service_id);
                 if (isEmpty(service))
                     return;
+                let user = users.find(x => x._id == service.specialist_id);
+                if (isEmpty(user))
+                    return;
+                newObj.specialist_email = user.email;
                 newObj.service_type = service.service_type;
                 newObj.description = service.description;
                 newObj.hourly_rate = service.hourly_rate;
@@ -156,7 +159,7 @@ router.get('/customer/finishedProjs/:id', async function (req, res) {
         return res.status(401).json({ message: "not auth" });
 
     const customer_id = req.params.id;
-    const user = await User.findById(customer_id);
+    const users = await User.find();
     // console.log(user);
     const services = await Service.find();
     // console.log(services);
@@ -169,14 +172,21 @@ router.get('/customer/finishedProjs/:id', async function (req, res) {
         .then(projects => {
             projects.forEach(async (element) => {
                 let newObj = element.toObject();
-                newObj.specialist_email = user.email;
                 let service = services.find(x => x._id == element.service_id);
+                if (isEmpty(service))
+                    return;
+                let user = users.find(x => x._id == service.specialist_id);
+                if (isEmpty(user))
+                    return;
+                newObj.specialist_email = user.email;
                 newObj.service_type = service.service_type;
                 newObj.description = service.description;
                 newObj.hourly_rate = service.hourly_rate;
                 newObj.preferred_hour = service.preferred_hour;
+                newObj.date = newObj.finish_date;
                 newProtoTypeProjectArray.push(newObj);
             });
+            // console.log(newProtoTypeProjectArray);
             res.json(newProtoTypeProjectArray);
         })
         .catch(err => {
