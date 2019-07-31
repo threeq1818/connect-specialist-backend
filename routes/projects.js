@@ -47,7 +47,7 @@ router.get('/specialist/finishedProjs/:id', async function (req, res) {
         return res.status(401).json({ message: "not auth" });
 
     const speialist_id = req.params.id;
-    const user = await User.findById(speialist_id);
+    const users = await User.find();
     const services = await Service.find({ specialist_id: speialist_id });
 
     const sidArray = services.map(a => a._id);
@@ -57,8 +57,13 @@ router.get('/specialist/finishedProjs/:id', async function (req, res) {
         .then(projects => {
             projects.forEach(element => {
                 let newObj = element.toObject();
-                newObj.specialist_email = user.email;
                 let service = services.find(x => x._id == element.service_id);
+                if (isEmpty(service))
+                    return;
+                let user = users.find(x => x._id == element.customer_id);
+                if (isEmpty(user))
+                    return;
+                newObj.customer_email = user.email;
                 newObj.service_type = service.service_type;
                 newObj.description = service.description;
                 newObj.hourly_rate = service.hourly_rate;
@@ -77,9 +82,9 @@ router.get('/specialist/finishedProjs/:id', async function (req, res) {
 router.get('/specialist/requestedProjs/:id', async function (req, res) {
     if (!req.user)
         return res.status(401).json({ message: "not auth" });
-
+    // console.log('req.user------------' + req.user);
     const speialist_id = req.params.id;
-    const user = await User.findById(speialist_id);
+    const users = await User.find();
     // console.log(user);
     const services = await Service.find({ specialist_id: speialist_id });
     // console.log(services);
@@ -87,18 +92,29 @@ router.get('/specialist/requestedProjs/:id', async function (req, res) {
     const sidArray = services.map(a => a._id);
     // console.log(sidArray);
     let newProjectProtoType = [];
-    Project.find({ service_id: { $in: sidArray }, status: "request" })
+    Project.find({ service_id: { $in: sidArray }, status: { $in: ['request', 'accept', 'reject'] } })
         .then(projects => {
             projects.forEach((element, i) => {
                 let newObj = element.toObject();
-                newObj.specialist_email = user.email;
+                // newObj.specialist_email = req.user.email;
                 let service = services.find(x => x._id == element.service_id);
+                if (isEmpty(service))
+                    return;
+                let user = users.find(x => x._id == element.customer_id);
+                if (isEmpty(user))
+                    return;
+                newObj.customer_email = user.email;
                 newObj.service_type = service.service_type;
                 newObj.description = service.description;
                 newObj.hourly_rate = service.hourly_rate;
                 newObj.preferred_hour = service.preferred_hour;
+                if (newObj.status === 'request')
+                    newObj.date = newObj.request_date;
+                else
+                    newObj.date = newObj.accept_reject_date;
                 newProjectProtoType.push(newObj);
             });
+            // console.log(newProjectProtoType);
             res.json(newProjectProtoType);
         })
         .catch(err => {
@@ -138,7 +154,6 @@ router.get('/customer/requestedProjs/:id', async function (req, res) {
                 newObj.description = service.description;
                 newObj.hourly_rate = service.hourly_rate;
                 newObj.preferred_hour = service.preferred_hour;
-                newObj.status = newObj.status;
                 if (newObj.status === 'request')
                     newObj.date = newObj.request_date;
                 else
@@ -230,10 +245,11 @@ router.put('/specialist/acceptProject/:id', function (req, res) {
 
     // if (!isValid)
     //     res.status(400).json(errors);
-
-    Project.updateOne({ _id: project_id }, { $set: { status: 'accept', accept_reject_date: Date.now() } })
+    const curDate = Date.now();
+    Project.updateOne({ _id: project_id }, { $set: { status: 'accept', accept_reject_date: curDate } })
         .then(project => {
-            res.json(project);
+            let retObj = { _id: project_id, date: curDate };
+            res.json(retObj);
             // {
             //     "n": 1,
             //     "nModified": 1,
@@ -248,15 +264,19 @@ router.put('/specialist/acceptProject/:id', function (req, res) {
 // specialist page
 // specialist reject the proejct
 router.put('/specialist/rejectProject/:id', function (req, res) {
+    if (!req.user)
+        return res.status(401).json({ message: "not auth" });
     const project_id = req.params.id;
     // const { errors, isValid } = validateProjectInput(req.body);
 
     // if (!isValid)
     //     res.status(400).json(errors);
 
-    Project.updateOne({ _id: project_id }, { $set: { status: 'reject', accept_reject_date: Date.now() } })
+    const curDate = Date.now();
+    Project.updateOne({ _id: project_id }, { $set: { status: 'reject', accept_reject_date: curDate } })
         .then(project => {
-            res.json(project);
+            let retObj = { _id: project_id, date: curDate };
+            res.json(retObj);
             // {
             //     "n": 1,
             //     "nModified": 1,
